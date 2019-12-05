@@ -1,0 +1,20 @@
+.bookList{
+    list-style:none;
+    padding-left: 0px;
+    li{
+        background: #fff;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-weight: bold;
+        small{
+            color: #0F4C81;
+            margin-left: 5px;
+            font-style: italic;
+        }
+    }
+}
+    
+    
+    

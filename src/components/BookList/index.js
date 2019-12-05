@@ -1,51 +1,43 @@
 import React, { Component } from "react";
-import axios from "axios";
+import "./style.scss";
 
 class BookList extends Component {
   constructor() {
     super();
-    var month = new Date().getMonth() + 1;
+
+    const date = new Date();
+    const month = date.toLocaleString("en", { month: "long" });
+
     this.state = {
-      books: [],
-      livrosLidos: [],
       month
     };
   }
-  componentDidMount() {
-    this.getBooks();
-  }
-
-  getBooks() {
-    axios
-      .get(`https://www.googleapis.com/books/v1/volumes?q=javascript`)
-      .then(res => {
-        console.log(res.data.items[0].volumeInfo.title);
-        this.setState({ books: [...res.data.items] });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
-
-  updateArrayLivros = ({ target }) => {
-    console.log(target);
-    const livro = {
-      id: target.id,
-      nome: target.getAttribute("nome"),
-      mes: target.getAttribute("mes")
-    };
-    console.log(livro);
-    this.state.livrosLidos.push(livro);
-    console.log(this.state.livrosLidos);
-
-    localStorage.setItem("livrosLidos", JSON.stringify(this.state.livrosLidos));
-    console.log(localStorage.getItem("livrosLidos"));
-  };
 
   render() {
+    if (localStorage.getItem("livrosLidos") != null) {
+      var arrayLivrosLidos = localStorage.getItem("livrosLidos");
+
+      arrayLivrosLidos = JSON.parse(arrayLivrosLidos);
+      var arrayIdsLivrosLidos = [];
+
+      arrayLivrosLidos.map(index => {
+        arrayIdsLivrosLidos.push(index.id);
+      });
+    }
+
     return (
-      <div>
-        {this.state.books.map((book, i) => {
+      <ul className="bookList">
+        {this.props.books.map((book, i) => {
+          if (localStorage.getItem("livrosLidos") != null) {
+            var checked;
+
+            if (arrayIdsLivrosLidos.includes(i.toString())) {
+              checked = true;
+            } else {
+              checked = false;
+            }
+          }
+
           return (
             <li>
               <input
@@ -53,13 +45,15 @@ class BookList extends Component {
                 mes={this.state.month}
                 nome={book.volumeInfo.title}
                 id={i}
-                onChange={this.updateArrayLivros}
+                onChange={this.props.updateArrayLivros}
+                defaultChecked={checked}
               />
               {book.volumeInfo.title}
+              {checked ? <small> - Readed on {this.state.month} </small> : ""}
             </li>
           );
         })}
-      </div>
+      </ul>
     );
   }
 }
