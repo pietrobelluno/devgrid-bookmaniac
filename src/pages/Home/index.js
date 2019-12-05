@@ -9,6 +9,7 @@ import "../../main.scss";
 class Home extends Component {
   constructor() {
     super();
+
     this.state = {
       books: [],
       livrosLidos: []
@@ -36,12 +37,15 @@ class Home extends Component {
         nome: target.getAttribute("nome"),
         mes: target.getAttribute("mes")
       };
-      this.state.livrosLidos.push(livro);
-      var livrosLidos = this.state.livrosLidos;
+      const livrosLidos = [...this.state.livrosLidos];
+      livrosLidos.push(livro);
+      this.setState({ livrosLidos });
     } else {
+      console.log(this.state.livrosLidos);
       var livrosLidos = this.state.livrosLidos.filter(item => {
         return item.id !== target.id;
       });
+      console.log(livrosLidos);
     }
 
     this.setState({
@@ -49,14 +53,18 @@ class Home extends Component {
     });
 
     localStorage.setItem("livrosLidos", JSON.stringify(this.state.livrosLidos));
-    console.log(localStorage.getItem("livrosLidos"));
   };
+
+  resetStorageAndUpdate() {
+    localStorage.clear();
+    this.setState({ state: this.state });
+  }
 
   render() {
     return (
       <div>
         <h1>Book Maniac Test</h1>
-        <p>Select the books you've already readed:</p>
+        <p>Select the books you've already read:</p>
         <p>
           In this project i used Google API to get the books about some keyword
           that I pass as a parameter.
@@ -68,6 +76,11 @@ class Home extends Component {
         <BookList
           updateArrayLivros={this.updateArrayLivros}
           books={this.state.books}
+        />
+        <Button
+          type="button"
+          name="Reset"
+          handleClick={this.resetStorageAndUpdate}
         />
 
         {/* <ReadedBooks /> */}
